@@ -8,8 +8,8 @@ import core.transform.dwt.DWT.MotherOfWavelet;
 import core.transform.dwt.DwtSubBand;
 import javafx.scene.image.Image;
 import core.transform.dwt.HaarDWT;
-import core.transform.helper.PearsonCorrelation;
-import core.transform.helper.Pseudorandom;
+import core.helper.PearsonCorrelation;
+import core.helper.Pseudorandom;
 import java.util.ArrayList;
 import java.util.List;
 

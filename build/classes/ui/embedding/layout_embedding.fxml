@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-
 <StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1360.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.embedding.EmbeddingController">
    <children>
       <AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1360.0" styleClass="mainFxmlClass">
@@ -52,7 +51,7 @@
                   <Pane fx:id="paneOutput" layoutX="119.0" layoutY="531.0" prefHeight="118.0" prefWidth="332.0" style="-fx-background-color: #ffffff;" visible="false">
                      <children>
                         <Label fx:id="labelPSNR" contentDisplay="CENTER" layoutX="16.0" layoutY="21.0" prefHeight="25.0" prefWidth="300.0" styleClass="myLabel" text="PSNR :   " textAlignment="CENTER" />
-                        <JFXButton fx:id="btnSaveEmbeddedImage" buttonType="RAISED" layoutX="106.0" layoutY="69.0" prefHeight="35.0" prefWidth="120.0" styleClass="myProcessButton" text="Simpan Citra" />
+                        <JFXButton fx:id="btnSaveEmbeddedImage" buttonType="RAISED" layoutX="106.0" layoutY="69.0" onAction="#onSaveEmebeddedImage" prefHeight="35.0" prefWidth="120.0" styleClass="myProcessButton" text="Simpan Citra" />
                      </children>
                   </Pane>
                </children>

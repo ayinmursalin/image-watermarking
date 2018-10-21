@@ -7,14 +7,20 @@ import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import core.Watermarker;
 import core.transform.TransformUtil;
-import core.transform.helper.PeakSignalNoiseRation;
+import core.helper.PeakSignalNoiseRation;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,6 +34,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 
 public class EmbeddingController implements Initializable {
 
@@ -65,6 +77,7 @@ public class EmbeddingController implements Initializable {
 
     private Watermarker watermarker;
     private Image containerImage, watermarkImage, embeddedImage;
+    private String fileName = "";
     private int seed1 = -1, seed2 = -1;
 
     @Override
@@ -89,15 +102,18 @@ public class EmbeddingController implements Initializable {
     @FXML
     void onChooseContainerImage(ActionEvent event) {
         paneOutput.setVisible(false);
-        
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Penampung");
             fileChooser.setInitialDirectory(new File("D:\\coding\\netbeans\\Watermarking\\src\\images"));
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
             Image image = TransformUtil.fileToImage(imageFile);
+
+            this.fileName = imageFile.getName();
+            this.fileName = fileName.substring(0, fileName.indexOf('.'));
 
             int imageHeight = image.heightProperty().intValue();
             int imageWidth = image.widthProperty().intValue();
@@ -208,18 +224,18 @@ public class EmbeddingController implements Initializable {
                 @Override
                 protected Double call() throws Exception {
                     pbEmbedd.setVisible(true);
-                    
+
                     PeakSignalNoiseRation psnr = new PeakSignalNoiseRation(containerImage, embeddedImage);
-                    
+
                     return psnr.getPsnrValue();
                 }
             };
             calculatePsnrTask.setOnSucceeded((WorkerStateEvent event1) -> {
                 pbEmbedd.setVisible(false);
                 paneOutput.setVisible(true);
-                
+
                 double psnr = calculatePsnrTask.getValue();
-                
+
                 labelPSNR.setText("PSNR : " + psnr);
             });
 
@@ -234,17 +250,60 @@ public class EmbeddingController implements Initializable {
             };
             embeddTask.setOnSucceeded((WorkerStateEvent event1) -> {
                 pbEmbedd.setVisible(false);
+                dialog.close();
                 this.embeddedImage = embeddTask.getValue();
 
                 ivPreviewImageContainer.setImage(embeddedImage);
-                
+
                 // start Calculate PSNR task after finisihing embedd image
                 new Thread(calculatePsnrTask).start();
             });
 
             new Thread(embeddTask).start();
         }
+    }
 
+    @FXML
+    void onSaveEmebeddedImage(ActionEvent event) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Simpan Citra Baru");
+            fileChooser.setInitialDirectory(new File("D:\\saved"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
+            fileChooser.setInitialFileName(fileName);
+
+            File file = fileChooser.showSaveDialog(new Stage());
+
+            if (file != null) {
+                BufferedImage image = SwingFXUtils.fromFXImage(embeddedImage, null);
+                ImageIO.write(image, "png", file);
+
+                // Save as Jpg (bad quality, dont know why)
+//                BufferedImage imageRgb = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+//                
+//                Graphics2D graphics = imageRgb.createGraphics();
+//                graphics.drawImage(image, 0, 0, java.awt.Color.BLACK, null);
+//                
+//                ImageIO.write(imageRgb, "jpg", file);
+//                
+//                graphics.dispose();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(EmbeddingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private IndexColorModel getDefaultColorModel() {
+        byte[] r = new byte[256];
+        byte[] g = new byte[256];
+        byte[] b = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            r[i] = (byte) i;
+            g[i] = (byte) i;
+            b[i] = (byte) i;
+        }
+        IndexColorModel defaultColorModel = new IndexColorModel(8, 256, r, g, b);
+        return defaultColorModel;
     }
 
 }
