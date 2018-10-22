@@ -6,9 +6,9 @@ import core.transform.TransformUtil;
 // HAAR-DWT
 public class HaarDWT extends DWT {
 
-    private double[][] originalPixels;
-    private double[][] transformedPixels;
-    private double[][] inversedPixels;
+    private double[][] originalPixels = null;
+    private double[][] transformedPixels = null;
+    private double[][] inversedPixels = null;
 
     private final int cycles;
 
@@ -384,6 +384,13 @@ public class HaarDWT extends DWT {
                 break;
             }
         }
+    }
+
+    @Override
+    public void clear() {
+        this.originalPixels = null;
+        this.inversedPixels = null;
+        this.transformedPixels = null;
     }
 
     /**

@@ -7,9 +7,9 @@ import java.util.List;
 
 public class DCT {
 
-    private double[][] originalPixels;
-    private double[][] transformedPixels;
-    private double[][] inversedPixels;
+    private double[][] originalPixels = null;
+    private double[][] transformedPixels = null;
+    private double[][] inversedPixels = null;
 
     private ArrayList<double[][]> transformedBlockedPixels;
     private ArrayList<double[][]> inversedBlockedPixels;
@@ -283,8 +283,26 @@ public class DCT {
         blockedPixels[3][0] = newMidBand.get(6);
     }
 
-    // dividing pixels by block size that can be process dct transform
-    // (BlocSize x BlockSize)
+    /**
+     * Clear or reset any state
+     */
+    public void clear() {
+        this.originalPixels = null;
+        this.transformedPixels = null;
+        this.inversedPixels = null;
+
+        this.transformedBlockedPixels = null;
+        this.inversedBlockedPixels = null;
+    }
+
+    /**
+     * dividing pixels by block size that can be process DCT transform
+     *
+     * @param pixels image pixels to split
+     * @return List of blocked pixels (BlockSize x BlockSize)
+     * @throws ArrayIndexOutOfBoundsException
+     * @throws NullPointerException
+     */
     private List<double[][]> splits(double[][] pixels) throws
             ArrayIndexOutOfBoundsException, NullPointerException {
         int height = pixels.length;
@@ -326,7 +344,14 @@ public class DCT {
         return blockedPixelList;
     }
 
-    // combine transformedBlocked into originalPixels
+    /**
+     * combine transformedBlocked into originalPixels
+     *
+     * @param targetPixels target of pixels to replace with new Blocked Pixels
+     * @param newBlockedPixels new Blocked Pixels that already modify
+     * @throws ArrayIndexOutOfBoundsException
+     * @throws NullPointerException
+     */
     private void replaces(double[][] targetPixels, List<double[][]> newBlockedPixels) throws
             ArrayIndexOutOfBoundsException, NullPointerException {
         int height = targetPixels.length;

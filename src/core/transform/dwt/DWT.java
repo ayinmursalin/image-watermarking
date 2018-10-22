@@ -59,5 +59,10 @@ public abstract class DWT {
      * @param subBand enum of Sub-band that available on DWT (depends on cycle)
      */
     public abstract void setDwtSubBand(double[][] newSubbandValue, DwtSubBand subBand);
+    
+    /**
+     * Clear or reset any state
+     */
+    public abstract void clear();
 
 }
