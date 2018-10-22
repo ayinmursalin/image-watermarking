@@ -34,15 +34,24 @@
             </Pane>
             <Pane fx:id="paneBackgroundRight" layoutX="900.0" prefHeight="768.0" prefWidth="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                <children>
-                  <Pane fx:id="paneOutput" layoutX="157.0" layoutY="324.0" prefHeight="300.0" prefWidth="300.0" style="-fx-background-color: #fff;" visible="false">
+                  <Pane fx:id="paneOutput" layoutX="135.0" layoutY="195.0" prefHeight="490.0" prefWidth="300.0" style="-fx-background-color: #fff;" visible="false">
                      <children>
-                        <Pane layoutX="99.0" layoutY="56.0" prefHeight="102.0" prefWidth="102.0" styleClass="myPaneOfImage">
+                        <Pane layoutX="23.0" layoutY="46.0" prefHeight="102.0" prefWidth="102.0" styleClass="myPaneOfImage">
                            <children>
-                              <ImageView fx:id="ivPreviewWatermark" fitHeight="64.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="ivPreviewExtractedWatermark" fitHeight="64.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
                            </children>
                         </Pane>
                         <Label layoutX="46.0" layoutY="14.0" prefHeight="25.0" styleClass="myLabel" text="Citra Tanda Air Hasil Ekstraksi" textAlignment="CENTER" />
-                        <JFXButton fx:id="btnSaveWatermark" buttonType="RAISED" layoutX="62.0" layoutY="213.0" onAction="#onSaveExtractedWatermark" prefHeight="48.0" prefWidth="174.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Simpan Citra" />
+                        <JFXButton fx:id="btnSaveWatermark" buttonType="RAISED" layoutX="143.0" layoutY="107.0" onAction="#onSaveExtractedWatermark" prefHeight="41.0" prefWidth="135.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Simpan Citra" />
+                        <Pane layoutX="175.0" layoutY="243.0" prefHeight="102.0" prefWidth="102.0" styleClass="myPaneOfImage">
+                           <children>
+                              <ImageView fx:id="ivPreviewOriginalWatermark" fitHeight="64.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </Pane>
+                        <Label layoutX="24.0" layoutY="207.0" prefHeight="25.0" styleClass="myLabel" text="Bandingkan dengan Watermark Asli" textAlignment="CENTER" />
+                        <JFXButton fx:id="btnChooseOriginalWatermark" buttonType="RAISED" layoutX="22.0" layoutY="243.0" onAction="#onChooseOriginalWatermark" prefHeight="41.0" prefWidth="135.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
+                        <JFXButton fx:id="btnCalculatePercentage" buttonType="RAISED" layoutX="52.0" layoutY="392.0" onAction="#onCalculatePercentage" prefHeight="41.0" prefWidth="196.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Hitung Persentase Kesamaan" />
+                        <Label fx:id="labelSimilarityPercentage" layoutX="14.0" layoutY="455.0" prefHeight="25.0" styleClass="myLabel" text="Persentase Kesamaan : " textAlignment="CENTER" />
                      </children>
                   </Pane>
                   <JFXTextField fx:id="tfSeed1" focusColor="#00adb5" labelFloat="true" layoutX="42.0" layoutY="57.0" promptText="Seed 1" unFocusColor="BLACK" />

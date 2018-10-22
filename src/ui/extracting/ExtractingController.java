@@ -7,15 +7,19 @@ import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import core.Watermarker;
 import core.transform.TransformUtil;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,48 +30,43 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
+import ui.embedding.EmbeddingController;
 
 public class ExtractingController implements Initializable {
 
     @FXML
     private StackPane stackPane;
-
     @FXML
     private Pane paneBackgroundLeft;
-
     @FXML
     private JFXButton btnChooseEmbeddedImage;
-
     @FXML
     private ImageView ivPreviewImageContainer;
-
     @FXML
     private Pane paneBackgroundRight;
-
     @FXML
-    private ImageView ivPreviewWatermark;
-
+    private ImageView ivPreviewExtractedWatermark;
+    @FXML
+    private ImageView ivPreviewOriginalWatermark;
     @FXML
     private JFXButton btnSaveWatermark;
-
     @FXML
     private JFXTextField tfSeed1;
-
     @FXML
     private JFXTextField tfSeed2;
-
     @FXML
     private JFXButton btnExtract;
-
     @FXML
     private Pane paneOutput;
-
     @FXML
-    private Label labelPSNR;
-
+    private Label labelSimilarityPercentage;
     @FXML
     private JFXButton btnSaveEmbeddedImage;
-
+    @FXML
+    private JFXButton btnChooseOriginalWatermark;
+    @FXML
+    private JFXButton btnCalculatePercentage;
     @FXML
     private JFXProgressBar pbExtract;
 
@@ -75,13 +74,15 @@ public class ExtractingController implements Initializable {
     private JFXDialog dialog;
 
     private Watermarker watermarker;
-    private Image embeddedImage, extractedWatermarkImage;
+    private SimilarityPercentage similarityPercentage;
+    private Image embeddedImage, extractedWatermarkImage, originalWatermarkImage;
     private String fileName = "";
     private int seed1 = -1, seed2 = -1;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         watermarker = new Watermarker();
+        similarityPercentage = new SimilarityPercentage();
 
         dialogLayout = new JFXDialogLayout();
         dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
@@ -113,6 +114,7 @@ public class ExtractingController implements Initializable {
 
             this.fileName = imageFile.getName();
             this.fileName = fileName.substring(0, fileName.indexOf('.'));
+            this.fileName = "watermark_" + fileName;
 
             int imageHeight = image.heightProperty().intValue();
             int imageWidth = image.widthProperty().intValue();
@@ -172,19 +174,79 @@ public class ExtractingController implements Initializable {
             extractTask.setOnSucceeded((WorkerStateEvent event1) -> {
                 pbExtract.setVisible(false);
                 paneOutput.setVisible(true);
-                
+
                 this.extractedWatermarkImage = extractTask.getValue();
-                
-                ivPreviewWatermark.setImage(extractedWatermarkImage);
+
+                ivPreviewExtractedWatermark.setImage(extractedWatermarkImage);
             });
-            
+
             new Thread(extractTask).start();
         }
     }
 
     @FXML
     void onSaveExtractedWatermark(ActionEvent event) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Simpan Citra Tanda Air Hasil Ekstraksi");
+            fileChooser.setInitialDirectory(new File("D:\\saved\\extracted_watermark"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
+            fileChooser.setInitialFileName(fileName);
 
+            File file = fileChooser.showSaveDialog(new Stage());
+
+            if (file != null) {
+                BufferedImage image = SwingFXUtils.fromFXImage(extractedWatermarkImage, null);
+                ImageIO.write(image, "png", file);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(EmbeddingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    void onChooseOriginalWatermark(ActionEvent event) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Pilih Citra Tanda Air");
+            fileChooser.setInitialDirectory(new File("D:\\coding\\netbeans\\Watermarking\\src\\images"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
+
+            File imageFile = fileChooser.showOpenDialog(new Stage());
+            Image image = TransformUtil.fileToImage(imageFile);
+
+            int imageHeight = image.heightProperty().intValue();
+            int imageWidth = image.widthProperty().intValue();
+
+            if (imageHeight == 32 || imageWidth == 32) {
+                this.originalWatermarkImage = image;
+
+                ivPreviewOriginalWatermark.setImage(originalWatermarkImage);
+            } else {
+                dialogLayout.setHeading(new Text("Citra Tanda Air tidak Sesuai"));
+                dialogLayout.setBody(new Text("Ukuran citra tanda air harus 32x32"));
+
+                dialog.show();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not an image or not found");
+        }
+    }
+
+    @FXML
+    void onCalculatePercentage(ActionEvent event) {
+        if (originalWatermarkImage == null) {
+            dialogLayout.setHeading(new Text("Citra Tanda Air Asli Tidak Ada"));
+            dialogLayout.setBody(new Text("Belum memilih citra tanda air asli, "
+                    + "harap masukkan citra tanda air asli terlebih dahulu sebelum proses perhitungan"));
+            dialog.show();
+        } else {
+            double percentage = similarityPercentage
+                    .getSimilarityPercentage(extractedWatermarkImage, originalWatermarkImage);
+            
+            String percentageStr = String.format("%.0f", percentage);
+            labelSimilarityPercentage.setText("Persentase Kesamaan : " + percentageStr + "%");
+        }
     }
 
 }

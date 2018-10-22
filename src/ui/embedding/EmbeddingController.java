@@ -272,16 +272,6 @@ public class EmbeddingController implements Initializable {
             if (file != null) {
                 BufferedImage image = SwingFXUtils.fromFXImage(embeddedImage, null);
                 ImageIO.write(image, "png", file);
-
-                // Save as Jpg (bad quality, dont know why)
-//                BufferedImage imageRgb = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-//                
-//                Graphics2D graphics = imageRgb.createGraphics();
-//                graphics.drawImage(image, 0, 0, java.awt.Color.BLACK, null);
-//                
-//                ImageIO.write(imageRgb, "jpg", file);
-//                
-//                graphics.dispose();
             }
         } catch (IOException ex) {
             Logger.getLogger(EmbeddingController.class.getName()).log(Level.SEVERE, null, ex);
