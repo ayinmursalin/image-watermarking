@@ -2,48 +2,41 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXProgressBar?>
-<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1360.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.embedding.EmbeddingController">
+<StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1360.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.removalattacks.RemovalController">
    <children>
       <AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1360.0" styleClass="mainFxmlClass">
          <stylesheets>
-            <URL value="@style_embedding.css" />
+            <URL value="@style_removal.css" />
          </stylesheets>
          <children>
             <Pane fx:id="paneBackgroundLeft" prefHeight="768.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
                <children>
                   <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra Penampung" />
-                  <JFXButton fx:id="btnChooseImageContainer" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseContainerImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
+                  <JFXButton fx:id="btnChooseImage" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
                   <Pane layoutX="200.0" layoutY="60.0" prefHeight="552.0" prefWidth="552.0" styleClass="myPaneOfImage">
                      <children>
-                        <ImageView fx:id="ivPreviewImageContainer" fitHeight="512.0" fitWidth="512.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="ivPreviewImage" fitHeight="512.0" fitWidth="512.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
             </Pane>
             <Pane fx:id="paneBackgroundRight" layoutX="900.0" prefHeight="768.0" prefWidth="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                <children>
-                  <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra Tanda Air" />
-                  <JFXButton fx:id="btnChooseWatermark" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseWatermarkImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
-                  <Pane layoutX="206.0" layoutY="59.0" prefHeight="102.0" prefWidth="102.0" styleClass="myPaneOfImage">
-                     <children>
-                        <ImageView fx:id="ivPreviewWatermark" fitHeight="64.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </Pane>
-                  <JFXTextField fx:id="tfSeed1" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="60.0" promptText="Seed 1" unFocusColor="BLACK" />
-                  <JFXTextField fx:id="tfSeed2" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="120.0" promptText="Seed 2" unFocusColor="BLACK" />
-                  <JFXButton fx:id="btnEmbedd" buttonType="RAISED" layoutX="135.0" layoutY="263.0" onAction="#onEmbeddWatemark" prefHeight="130.0" prefWidth="290.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Embedd">
+                  <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Jenis Serangan (Removal Attacks)" />
+                  <JFXButton fx:id="btnProcessAttack" buttonType="RAISED" layoutX="128.0" layoutY="197.0" onAction="#onProcessAttack" prefHeight="130.0" prefWidth="290.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Proses">
                      <font>
                         <Font size="32.0" />
                      </font>
@@ -51,9 +44,17 @@
                   <Pane fx:id="paneOutput" layoutX="119.0" layoutY="531.0" prefHeight="118.0" prefWidth="332.0" style="-fx-background-color: #ffffff;" visible="false">
                      <children>
                         <Label fx:id="labelPSNR" contentDisplay="CENTER" layoutX="16.0" layoutY="21.0" prefHeight="25.0" prefWidth="300.0" styleClass="myLabel" text="PSNR :   " textAlignment="CENTER" />
-                        <JFXButton fx:id="btnSaveEmbeddedImage" buttonType="RAISED" layoutX="106.0" layoutY="69.0" onAction="#onSaveEmebeddedImage" prefHeight="35.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Simpan Citra" />
+                        <JFXButton fx:id="btnSaveModifiedImage" buttonType="RAISED" layoutX="106.0" layoutY="69.0" onAction="#onSaveModifiedImage" prefHeight="35.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Simpan Citra" />
                      </children>
                   </Pane>
+                  <JFXRadioButton fx:id="rbSharpening" layoutX="68.0" layoutY="76.0" onAction="#onChooseRemovalAttack" prefHeight="25.0" prefWidth="120.0" text="Sharpening">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="removalattack" />
+                     </toggleGroup>
+                  </JFXRadioButton>
+                  <JFXRadioButton fx:id="rbMedianFilter" layoutX="68.0" layoutY="123.0" onAction="#onChooseRemovalAttack" prefHeight="25.0" prefWidth="120.0" text="Median Filter" toggleGroup="$removalattack" />
+                  <JFXRadioButton fx:id="rbNoiseAddition" layoutX="241.0" layoutY="123.0" onAction="#onChooseRemovalAttack" prefHeight="25.0" prefWidth="120.0" text="Noise Addition" toggleGroup="$removalattack" />
+                  <JFXRadioButton fx:id="rbBlurring" layoutX="241.0" layoutY="76.0" onAction="#onChooseRemovalAttack" prefHeight="25.0" prefWidth="120.0" text="Blurring" toggleGroup="$removalattack" />
                </children>
             </Pane>
             <MenuBar prefHeight="25.0" prefWidth="305.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -75,7 +76,7 @@
                   </Menu>
                </menus>
             </MenuBar>
-            <JFXProgressBar fx:id="pbEmbedd" layoutY="25.0" prefHeight="8.0" prefWidth="1360.0" visible="false" />
+            <JFXProgressBar fx:id="pbRemoval" layoutY="25.0" prefHeight="8.0" prefWidth="1360.0" visible="false" />
          </children>
       </AnchorPane>
    </children>

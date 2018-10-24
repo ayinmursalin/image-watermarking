@@ -1,7 +1,7 @@
 package core.transform.dct;
 
 import core.transform.TransformDirection;
-import core.transform.TransformUtil;
+import core.helper.ImageUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class DCT {
      * @param pixels Original pixels of Image
      */
     public void setPixels(double[][] pixels) {
-        originalPixels = TransformUtil.copyPixels(pixels);
+        originalPixels = ImageUtil.copyPixels(pixels);
     }
 
     /**
@@ -65,7 +65,7 @@ public class DCT {
      */
     private void forwardDct() {
         // copy of pixels
-        transformedPixels = TransformUtil.copyPixels(originalPixels);
+        transformedPixels = ImageUtil.copyPixels(originalPixels);
 
         // pixels that can be process DCT transform (blockSize x blockSize)
         List<double[][]> transformablePixels = splits(transformedPixels);
@@ -143,7 +143,7 @@ public class DCT {
      */
     private double[][] inverseDct() {
         // copy of pixels
-        inversedPixels = TransformUtil.copyPixels(transformedPixels);
+        inversedPixels = ImageUtil.copyPixels(transformedPixels);
 
         // pixels that can be process DCT transform (blockSize x blockSize)
         List<double[][]> transformablePixels = splits(inversedPixels);

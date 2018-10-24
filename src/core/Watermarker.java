@@ -1,7 +1,7 @@
 package core;
 
 import core.transform.TransformDirection;
-import core.transform.TransformUtil;
+import core.helper.ImageUtil;
 import core.transform.dct.DCT;
 import core.transform.dwt.DWT;
 import core.transform.dwt.DWT.MotherOfWavelet;
@@ -64,8 +64,8 @@ public class Watermarker {
         List<Double> pn0 = pseudorandomGenerator.getRandomNumbers(seed1, MID_BAND_DCT_SIZE);
         List<Double> pn1 = pseudorandomGenerator.getRandomNumbers(seed2, MID_BAND_DCT_SIZE);
 
-        double[][] containerPixels = TransformUtil.imageToPixelValues(containerImage);
-        List<Integer> watermarkBinaryPixels = TransformUtil.imageToBinaryPixelValue(watermarkImage);
+        double[][] containerPixels = ImageUtil.imageToPixelValues(containerImage);
+        List<Integer> watermarkBinaryPixels = ImageUtil.imageToBinaryPixelValue(watermarkImage);
 
         return embedd(containerPixels, watermarkBinaryPixels, pn0, pn1);
     }
@@ -123,7 +123,7 @@ public class Watermarker {
 
         double[][] afterInverseDWT = dwt.getPixels();
 
-        return TransformUtil.pixelValuesToImage(afterInverseDWT);
+        return ImageUtil.pixelValuesToImage(afterInverseDWT);
     }
 
     // extractWatermark watermark from image
@@ -135,7 +135,7 @@ public class Watermarker {
         List<Double> pn0 = pseudorandomGenerator.getRandomNumbers(seed1, MID_BAND_DCT_SIZE);
         List<Double> pn1 = pseudorandomGenerator.getRandomNumbers(seed2, MID_BAND_DCT_SIZE);
 
-        double[][] embeddedPixels = TransformUtil.imageToPixelValues(embeddedImage);
+        double[][] embeddedPixels = ImageUtil.imageToPixelValues(embeddedImage);
 
         return extract(embeddedPixels, pn0, pn1);
     }
@@ -175,7 +175,7 @@ public class Watermarker {
             }
         }
 
-        return TransformUtil.pixelValuesToImage(extractedWatermark);
+        return ImageUtil.pixelValuesToImage(extractedWatermark);
     }
 
 }

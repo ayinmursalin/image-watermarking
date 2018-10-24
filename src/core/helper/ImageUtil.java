@@ -1,4 +1,4 @@
-package core.transform;
+package core.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-public class TransformUtil {
+public class ImageUtil {
 
     // copy pixels (do not modify original pixels)
     public static double[][] copyPixels(double[][] pixels) {

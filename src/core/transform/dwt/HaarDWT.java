@@ -1,7 +1,7 @@
 package core.transform.dwt;
 
 import core.transform.TransformDirection;
-import core.transform.TransformUtil;
+import core.helper.ImageUtil;
 
 // HAAR-DWT
 public class HaarDWT extends DWT {
@@ -18,7 +18,7 @@ public class HaarDWT extends DWT {
 
     @Override
     public void setPixels(double[][] pixels) {
-        originalPixels = TransformUtil.copyPixels(pixels);
+        originalPixels = ImageUtil.copyPixels(pixels);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class HaarDWT extends DWT {
             double[][] tempTransformedPixels = new double[height][width];
 
             // copy pixels (don't overwrite original pixels)
-            transformedPixels = TransformUtil.copyPixels(originalPixels);
+            transformedPixels = ImageUtil.copyPixels(originalPixels);
 
             // cycling
             for (int i = 0; i < cycles; i++) {
@@ -130,7 +130,7 @@ public class HaarDWT extends DWT {
             double[][] tempOriginalPixels = new double[height][width];
 
             // copy pixels (don't modify original pixels)
-            inversedPixels = TransformUtil.copyPixels(transformedPixels);
+            inversedPixels = ImageUtil.copyPixels(transformedPixels);
 
             // height and width per sub-band
             int height2 = height / (int) Math.pow(2, cycles);

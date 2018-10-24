@@ -26,13 +26,14 @@ public class HomeController implements Initializable {
     @FXML
     private JFXButton btnRemovalAttacks;
 
-    Stage embeddingStage, extractingStage;
+    Stage embeddingStage, extractingStage, removalAttackStage;
 
     // on initialize
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         embeddingStage = new Stage();
         extractingStage = new Stage();
+        removalAttackStage = new Stage();
     }
 
     @FXML
@@ -55,8 +56,8 @@ public class HomeController implements Initializable {
 
     @FXML
     void onRemovalAttacks(ActionEvent event) throws IOException {
-//        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/embedding/layout_embedding.fxml"));
-
+        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/removalattacks/layout_removal.fxml"));
+        openNewWindow(removalAttackStage, root, "Removal Attacks");
     }
 
     private void openNewWindow(Stage stage, Parent root, String title) {

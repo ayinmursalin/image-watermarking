@@ -1,6 +1,6 @@
 package ui.extracting;
 
-import core.transform.TransformUtil;
+import core.helper.ImageUtil;
 import javafx.scene.image.Image;
 
 public class SimilarityPercentage {
@@ -19,8 +19,8 @@ public class SimilarityPercentage {
         int totalPixels = height1 * width1;
         int sumSimilar = 0;
 
-        double[][] pixelImage1 = TransformUtil.imageToPixelValues(image1);
-        double[][] pixelImage2 = TransformUtil.imageToPixelValues(image2);
+        double[][] pixelImage1 = ImageUtil.imageToPixelValues(image1);
+        double[][] pixelImage2 = ImageUtil.imageToPixelValues(image2);
 
         for (int row = 0; row < height1; row++) {
             for (int col = 0; col < width1; col++) {

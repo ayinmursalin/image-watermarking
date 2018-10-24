@@ -6,7 +6,7 @@ import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import core.Watermarker;
-import core.transform.TransformUtil;
+import core.helper.ImageUtil;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -110,7 +110,7 @@ public class ExtractingController implements Initializable {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
-            Image image = TransformUtil.fileToImage(imageFile);
+            Image image = ImageUtil.fileToImage(imageFile);
 
             this.fileName = imageFile.getName();
             this.fileName = fileName.substring(0, fileName.indexOf('.'));
@@ -150,17 +150,26 @@ public class ExtractingController implements Initializable {
             // error
         }
 
+        Text messageHeader = new Text();
+        Text messageBody = new Text();
+
+        dialogLayout.setHeading(messageHeader);
+        dialogLayout.setBody(messageBody);
+        
         if (embeddedImage == null) {
-            dialogLayout.setHeading(new Text("Citra Penampung Kosong"));
-            dialogLayout.setBody(new Text("Citra penampung belum dipilih, harap pilih citra penampung yang sudah dilakukan proses embedding watermark terlebih dahulu"));
+            messageHeader.setText("Citra Penampung Kosong");
+            messageBody.setText("Citra penampung belum dipilih, harap pilih citra penampung yang sudah dilakukan proses embedding watermark terlebih dahulu");
+
             dialog.show();
         } else if (seed1 == -1) {
-            dialogLayout.setHeading(new Text("Key 1 belum diisi"));
-            dialogLayout.setBody(new Text("Belum memasukkan seed 1, harap isi terlebih dahulu seed 1"));
+            messageHeader.setText("Key 1 belum diisi");
+            messageBody.setText("Belum memasukkan seed 1, harap isi terlebih dahulu seed 1");
+
             dialog.show();
         } else if (seed2 == -1) {
-            dialogLayout.setHeading(new Text("Key 2 belum diisi"));
-            dialogLayout.setBody(new Text("Belum memasukkan seed 2, harap isi terlebih dahulu seed 2"));
+            messageHeader.setText("Key 2 belum diisi");
+            messageBody.setText("Belum memasukkan seed 2, harap isi terlebih dahulu seed 2");
+
             dialog.show();
         } else {
             Task<Image> extractTask = new Task<Image>() {
@@ -213,7 +222,7 @@ public class ExtractingController implements Initializable {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
-            Image image = TransformUtil.fileToImage(imageFile);
+            Image image = ImageUtil.fileToImage(imageFile);
 
             int imageHeight = image.heightProperty().intValue();
             int imageWidth = image.widthProperty().intValue();

@@ -1,6 +1,5 @@
 package core.helper;
 
-import core.transform.TransformUtil;
 import javafx.scene.image.Image;
 
 public class PeakSignalNoiseRation {
@@ -19,8 +18,8 @@ public class PeakSignalNoiseRation {
         image2Height = image2.heightProperty().intValue();
         image2Width = image2.widthProperty().intValue();
 
-        this.image1 = TransformUtil.imageToPixelValues(image1);
-        this.image2 = TransformUtil.imageToPixelValues(image2);
+        this.image1 = ImageUtil.imageToPixelValues(image1);
+        this.image2 = ImageUtil.imageToPixelValues(image2);
     }
 
     public double getPsnrValue() {
