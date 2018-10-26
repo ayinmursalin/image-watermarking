@@ -105,6 +105,8 @@ public class RemovalController implements Initializable {
             if (imageHeight == imageWidth) {
                 this.originalImage = image;
                 ivPreviewImage.setImage(originalImage);
+                
+                modifiedImage = null;                
             } else {
                 dialogLayout.setHeading(new Text("Bukan Citra Persegi"));
                 dialogLayout.setBody(new Text("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama"));
@@ -198,7 +200,7 @@ public class RemovalController implements Initializable {
             this.modifiedImage = sharpeningTask.getValue();
 
             ivPreviewImage.setImage(modifiedImage);
-            
+
             // calculate PSNR
             calculatePSNR();
         });
@@ -229,15 +231,61 @@ public class RemovalController implements Initializable {
 
         new Thread(bluringTask).start();
     }
-    
+
     private void medianFilterImage(Image imageToProcess) {
-        
+        Task<Image> medianFilterTask = new Task<Image>() {
+            @Override
+            protected Image call() throws Exception {
+                pbRemoval.setVisible(true);
+                // run in background thread
+                return attacker.medianFilterImage(imageToProcess);
+            }
+        };
+        medianFilterTask.setOnFailed((event) -> {
+            System.out.println("FAILED");
+        });
+        medianFilterTask.setOnSucceeded((WorkerStateEvent event) -> {
+            pbRemoval.setVisible(false);
+            paneOutput.setVisible(true);
+
+            this.modifiedImage = medianFilterTask.getValue();
+
+            ivPreviewImage.setImage(modifiedImage);
+
+            // calculate PSNR
+            calculatePSNR();
+        });
+
+        new Thread(medianFilterTask).start();
     }
 
     private void noiseAdditionImage(Image imageToProcess) {
+        Task<Image> noiseAdditionTask = new Task<Image>() {
+            @Override
+            protected Image call() throws Exception {
+                pbRemoval.setVisible(true);
+                // run in background thread
+                return attacker.noiseAdditionImage(imageToProcess);
+            }
+        };
+        noiseAdditionTask.setOnFailed((event) -> {
+            System.out.println("FAILED");
+        });
+        noiseAdditionTask.setOnSucceeded((WorkerStateEvent event) -> {
+            pbRemoval.setVisible(false);
+            paneOutput.setVisible(true);
 
+            this.modifiedImage = noiseAdditionTask.getValue();
+
+            ivPreviewImage.setImage(modifiedImage);
+
+            // calculate PSNR
+            calculatePSNR();
+        });
+
+        new Thread(noiseAdditionTask).start();
     }
-    
+
     private void calculatePSNR() {
         // calculate PSNR
         Task<Double> calculatePsnrTask = new Task<Double>() {
@@ -258,7 +306,7 @@ public class RemovalController implements Initializable {
 
             labelPSNR.setText("PSNR : " + psnr);
         });
-        
+
         new Thread(calculatePsnrTask).start();
     }
 

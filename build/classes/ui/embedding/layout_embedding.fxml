@@ -41,8 +41,8 @@
                         <ImageView fx:id="ivPreviewWatermark" fitHeight="64.0" fitWidth="64.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
-                  <JFXTextField fx:id="tfSeed1" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="60.0" promptText="Seed 1" unFocusColor="BLACK" />
-                  <JFXTextField fx:id="tfSeed2" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="120.0" promptText="Seed 2" unFocusColor="BLACK" />
+                  <JFXTextField fx:id="tfSeed1" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="60.0" promptText="Key 1" unFocusColor="BLACK" />
+                  <JFXTextField fx:id="tfSeed2" focusColor="#00adb5" labelFloat="true" layoutX="377.0" layoutY="120.0" promptText="Key 2" unFocusColor="BLACK" />
                   <JFXButton fx:id="btnEmbedd" buttonType="RAISED" layoutX="135.0" layoutY="263.0" onAction="#onEmbeddWatemark" prefHeight="130.0" prefWidth="290.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Embedd">
                      <font>
                         <Font size="32.0" />
