@@ -11,16 +11,22 @@ import core.attacks.geometric.GeometricType;
 import core.attacks.geometric.RotationDirection;
 import core.helper.ImageUtil;
 import core.helper.PeakSignalNoiseRation;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -31,6 +37,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 
 public class GeometricController implements Initializable {
 
@@ -83,6 +90,7 @@ public class GeometricController implements Initializable {
     @FXML
     private JFXProgressBar pbRemoval;
 
+    private Text messageHeader, messageBody;
     private JFXDialogLayout dialogLayout;
     private JFXDialog dialog;
 
@@ -96,12 +104,35 @@ public class GeometricController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         attacker = new GeometricAttacker();
 
+        Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
+        Pattern patternMin = Pattern.compile("-*\\d*|\\d+\\,\\d*");
+        TextFormatter formatterD1 = new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> {
+            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
+        });
+        TextFormatter formatterD2 = new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> {
+            return patternMin.matcher(change.getControlNewText()).matches() ? change : null;
+        });
+        TextFormatter formatterD3 = new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> {
+            return patternMin.matcher(change.getControlNewText()).matches() ? change : null;
+        });
+
+        tfScalling.setTextFormatter(formatterD1);
+        tfTranslationX.setTextFormatter(formatterD2);
+        tfTranslationY.setTextFormatter(formatterD3);
+
+        // dialog
+        messageHeader = new Text("");
+        messageBody = new Text("");
+
         dialogLayout = new JFXDialogLayout();
+        dialogLayout.setHeading(messageHeader);
+        dialogLayout.setBody(messageBody);
         dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
     }
 
     @FXML
     void onChooseImage(ActionEvent event) {
+        hideLayout();
         paneOutput.setVisible(false);
 
         try {
@@ -137,11 +168,7 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onChooseGeometricAttack(ActionEvent event) {
-        layoutRotation.setVisible(false);
-        layoutTranslation.setVisible(false);
-        layoutScalling.setVisible(false);
-        btnProcessAttack.setVisible(false);
-
+        hideLayout();
         Toggle selectedRadioButton = geometricattack.getSelectedToggle();
 
         if (selectedRadioButton == rbRotation) {
@@ -162,20 +189,9 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onRotateLeft(ActionEvent event) {
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-
         if (originalImage == null) {
             messageHeader.setText("Belum Memilih Citra");
             messageBody.setText("Harap pilih citra yang akan diproses terlebih dahulu.");
-
-            dialog.show();
-        } else if (type == null) {
-            messageHeader.setText("Belum Memilih Jenis Serangan");
-            messageBody.setText("Harap pilih serangan yang akan dilakukan terlebih dahulu.");
 
             dialog.show();
         } else {
@@ -194,20 +210,9 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onRotateRight(ActionEvent event) {
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-
         if (originalImage == null) {
             messageHeader.setText("Belum Memilih Citra");
             messageBody.setText("Harap pilih citra yang akan diproses terlebih dahulu.");
-
-            dialog.show();
-        } else if (type == null) {
-            messageHeader.setText("Belum Memilih Jenis Serangan");
-            messageBody.setText("Harap pilih serangan yang akan dilakukan terlebih dahulu.");
 
             dialog.show();
         } else {
@@ -226,20 +231,9 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onProcessAttack(ActionEvent event) {
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-
         if (originalImage == null) {
             messageHeader.setText("Belum Memilih Citra");
             messageBody.setText("Harap pilih citra yang akan diproses terlebih dahulu.");
-
-            dialog.show();
-        } else if (type == null) {
-            messageHeader.setText("Belum Memilih Jenis Serangan");
-            messageBody.setText("Harap pilih serangan yang akan dilakukan terlebih dahulu.");
 
             dialog.show();
         } else {
@@ -254,11 +248,9 @@ public class GeometricController implements Initializable {
 
             switch (type) {
                 case TRANSLATION:
-                    this.fileName = "translation_" + fileName;
                     translateImage(imageToProcess);
                     break;
                 case SCALLING:
-                    this.fileName = "scalling_" + fileName;
                     scaleImage(imageToProcess);
                     break;
             }
@@ -266,7 +258,7 @@ public class GeometricController implements Initializable {
     }
 
     private void rotateImage(Image imageToProcess, RotationDirection direction) {
-        Task<Image> rotationTask = new Task<Image>() {
+        Task<Image> rotateTask = new Task<Image>() {
             @Override
             protected Image call() throws Exception {
                 pbRemoval.setVisible(true);
@@ -274,11 +266,11 @@ public class GeometricController implements Initializable {
                 return attacker.rotateImage(imageToProcess, direction);
             }
         };
-        rotationTask.setOnSucceeded((WorkerStateEvent event) -> {
+        rotateTask.setOnSucceeded((WorkerStateEvent event) -> {
             pbRemoval.setVisible(false);
             paneOutput.setVisible(true);
 
-            this.modifiedImage = rotationTask.getValue();
+            this.modifiedImage = rotateTask.getValue();
 
             ivPreviewImage.setImage(modifiedImage);
 
@@ -286,15 +278,74 @@ public class GeometricController implements Initializable {
             calculatePSNR();
         });
 
-        new Thread(rotationTask).start();
+        new Thread(rotateTask).start();
     }
 
     private void translateImage(Image imageToProcess) {
+        try {
+            double addX = Double.parseDouble(tfTranslationX.getText());
+            double addY = Double.parseDouble(tfTranslationY.getText());
 
+            Task<Image> translateTask = new Task<Image>() {
+                @Override
+                protected Image call() throws Exception {
+                    pbRemoval.setVisible(true);
+                    // run in background thread
+                    return attacker.translateImage(imageToProcess, addX, addY);
+                }
+            };
+            translateTask.setOnSucceeded((WorkerStateEvent event) -> {
+                pbRemoval.setVisible(false);
+                paneOutput.setVisible(true);
+
+                this.modifiedImage = translateTask.getValue();
+
+                ivPreviewImage.setImage(modifiedImage);
+
+                // calculate PSNR
+                calculatePSNR();
+            });
+
+            new Thread(translateTask).start();
+        } catch (NumberFormatException e) {
+            messageHeader.setText("Belum Menentukan nilai tranlasi X atau Y");
+            messageBody.setText("Harap masukkan besaran translasi terlebih dahulu.");
+
+            dialog.show();
+        }
     }
 
     private void scaleImage(Image imageToProcess) {
+        try {
+            double scaleParam = Double.parseDouble(tfScalling.getText());
 
+            Task<Image> scaleTask = new Task<Image>() {
+                @Override
+                protected Image call() throws Exception {
+                    pbRemoval.setVisible(true);
+                    // run in background thread
+                    return attacker.scaleImage(imageToProcess, scaleParam);
+                }
+            };
+            scaleTask.setOnSucceeded((WorkerStateEvent event) -> {
+                pbRemoval.setVisible(false);
+                paneOutput.setVisible(true);
+
+                this.modifiedImage = scaleTask.getValue();
+
+                ivPreviewImage.setImage(modifiedImage);
+
+                // calculate PSNR
+                calculatePSNR();
+            });
+
+            new Thread(scaleTask).start();
+        } catch (NumberFormatException e) {
+            messageHeader.setText("Belum Menentukan besaran scalling");
+            messageBody.setText("Harap masukkan besaran scaling terhadap ukuran asli terlebih dahulu.");
+
+            dialog.show();
+        }
     }
 
     private void calculatePSNR() {
@@ -323,7 +374,41 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onSaveModifiedImage(ActionEvent event) {
+        switch (type) {
+            case ROTATION:
+                this.fileName = "rotation_" + this.fileName;
+                break;
+            case TRANSLATION:
+                this.fileName = "translation_" + this.fileName;
+                break;
+            case SCALLING:
+                this.fileName = "scalling_" + this.fileName;
+                break;
+        }
 
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Simpan Citra Baru");
+            fileChooser.setInitialDirectory(new File("D:\\saved\\modified"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
+            fileChooser.setInitialFileName(fileName);
+
+            File file = fileChooser.showSaveDialog(new Stage());
+
+            if (file != null) {
+                BufferedImage image = SwingFXUtils.fromFXImage(modifiedImage, null);
+                ImageIO.write(image, "png", file);
+            }
+        } catch (IOException ex) {
+            System.out.println("File not an image or not found");
+        }
+    }
+
+    private void hideLayout() {
+        layoutRotation.setVisible(false);
+        layoutTranslation.setVisible(false);
+        layoutScalling.setVisible(false);
+        btnProcessAttack.setVisible(false);
     }
 
 }

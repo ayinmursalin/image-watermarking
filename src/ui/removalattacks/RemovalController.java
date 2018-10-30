@@ -165,19 +165,15 @@ public class RemovalController implements Initializable {
 
             switch (type) {
                 case SHARPENING:
-                    this.fileName = "sharpen_" + fileName;
                     sharpenImage(imageToProcess);
                     break;
                 case BLURRING:
-                    this.fileName = "blur_" + fileName;
                     blurImage(imageToProcess);
                     break;
                 case MEDIAN_FILTER:
-                    this.fileName = "medianfilter_" + fileName;
                     medianFilterImage(imageToProcess);
                     break;
                 case NOISE_ADDITION:
-                    this.fileName = "noise_" + fileName;
                     noiseAdditionImage(imageToProcess);
                     break;
             }
@@ -306,6 +302,21 @@ public class RemovalController implements Initializable {
 
     @FXML
     void onSaveModifiedImage(ActionEvent event) {
+        switch (type) {
+            case SHARPENING:
+                this.fileName = "sharpen_" + fileName;
+                break;
+            case BLURRING:
+                this.fileName = "blur_" + fileName;
+                break;
+            case MEDIAN_FILTER:
+                this.fileName = "medianfilter_" + fileName;
+                break;
+            case NOISE_ADDITION:
+                this.fileName = "noise_" + fileName;
+                break;
+        }
+        
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Simpan Citra Baru");
