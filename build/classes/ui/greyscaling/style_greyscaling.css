@@ -1,0 +1,28 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+    -fx-background-color: #ffffff;
+}
+
+.myProcessButton {
+    -fx-background-color: #00adb5;
+    -fx-text-fill: #ffffff;
+}
+
+.myLabel {
+    -fx-font-size: 16px;
+}
+
+.myPaneOfImage {
+    -fx-background-color: #b73535;
+}
+
+#paneBackgroundLeft {
+    -fx-background-color: #ece8d9;
+}
+
+#paneBackgroundRight {
+    -fx-background-color: #faf6e9;
+}

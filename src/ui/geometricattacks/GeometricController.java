@@ -99,6 +99,7 @@ public class GeometricController implements Initializable {
     private GeometricType type;
 
     private String fileName = "";
+    private File savedDir;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -128,6 +129,9 @@ public class GeometricController implements Initializable {
         dialogLayout.setHeading(messageHeader);
         dialogLayout.setBody(messageBody);
         dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+
+        // save dir init
+        savedDir = new File("D:\\_watermarking\\saved\\1_greyscaling");
     }
 
     @FXML
@@ -138,7 +142,7 @@ public class GeometricController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\embedded"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved\\2_embedding"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -374,24 +378,29 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onSaveModifiedImage(ActionEvent event) {
+        String newFilename = "";
+        
         switch (type) {
             case ROTATION:
-                this.fileName = "rotation_" + this.fileName;
+                newFilename = "rotation_" + this.fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\4_rotating");
                 break;
             case TRANSLATION:
-                this.fileName = "translation_" + this.fileName;
+                newFilename = "translation_" + this.fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\5_translating");
                 break;
             case SCALLING:
-                this.fileName = "scalling_" + this.fileName;
+                newFilename = "scalling_" + this.fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\6_scalling");
                 break;
         }
 
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Simpan Citra Baru");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\modified"));
+            fileChooser.setInitialDirectory(savedDir);
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
-            fileChooser.setInitialFileName(fileName);
+            fileChooser.setInitialFileName(newFilename);
 
             File file = fileChooser.showSaveDialog(new Stage());
 
@@ -409,6 +418,21 @@ public class GeometricController implements Initializable {
         layoutTranslation.setVisible(false);
         layoutScalling.setVisible(false);
         btnProcessAttack.setVisible(false);
+    }
+
+    private void decideSaveLocation(String path) {
+        int containerHeight = originalImage.heightProperty().intValue();
+        int containerWidth = originalImage.widthProperty().intValue();
+
+        if ((containerHeight >= 512 && containerHeight < 1024)
+                && (containerWidth >= 512 && containerWidth < 1024)) {
+            savedDir = new File(path + "\\small");
+        } else if ((containerHeight >= 1024 && containerHeight < 2048)
+                && (containerWidth >= 1024 && containerWidth < 2048)) {
+            savedDir = new File(path + "\\medium");
+        } else if (containerHeight >= 2048 && containerWidth >= 2048) {
+            savedDir = new File(path + "\\large");
+        }
     }
 
 }

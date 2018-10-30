@@ -28,6 +28,7 @@
             <JFXButton fx:id="btnExtracting" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#onExtract" prefHeight="87.0" prefWidth="145.0" ripplerFill="BLACK" styleClass="myButton" text="Extracting" textFill="WHITE" GridPane.columnIndex="2" />
             <JFXButton fx:id="btnGeometryAttacks" buttonType="RAISED" layoutX="271.0" layoutY="10.0" onAction="#onGeometryAttacks" prefHeight="87.0" prefWidth="145.0" ripplerFill="BLACK" styleClass="myButton" text="Geometry Attacks" textFill="WHITE" GridPane.rowIndex="2" />
             <JFXButton fx:id="btnRemovalAttacks" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#onRemovalAttacks" prefHeight="87.0" prefWidth="145.0" ripplerFill="BLACK" styleClass="myButton" text="Removal Attacks" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <JFXButton fx:id="btnGreyscaling" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#onGreyscaling" prefHeight="87.0" prefWidth="145.0" ripplerFill="BLACK" styleClass="myGreyButton" text="Greyscaling" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

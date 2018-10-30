@@ -66,6 +66,7 @@ public class RemovalController implements Initializable {
     @FXML
     private JFXProgressBar pbRemoval;
 
+    private Text messageHeader, messageBody;
     private JFXDialogLayout dialogLayout;
     private JFXDialog dialog;
 
@@ -74,13 +75,23 @@ public class RemovalController implements Initializable {
     private RemovalType type;
 
     private String fileName = "";
+    private File savedDir;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         attacker = new RemovalAttacker();
 
+        // dialog
+        messageHeader = new Text("");
+        messageBody = new Text("");
+
         dialogLayout = new JFXDialogLayout();
+        dialogLayout.setHeading(messageHeader);
+        dialogLayout.setBody(messageBody);
         dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+
+        // save dir init
+        savedDir = new File("D:\\_watermarking\\saved\\1_greyscaling");
     }
 
     @FXML
@@ -90,7 +101,7 @@ public class RemovalController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\embedded"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved\\2_embedding"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -105,8 +116,8 @@ public class RemovalController implements Initializable {
             if (imageHeight == imageWidth) {
                 this.originalImage = image;
                 ivPreviewImage.setImage(originalImage);
-                
-                modifiedImage = null;                
+
+                modifiedImage = null;
             } else {
                 dialogLayout.setHeading(new Text("Bukan Citra Persegi"));
                 dialogLayout.setBody(new Text("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama"));
@@ -137,12 +148,6 @@ public class RemovalController implements Initializable {
 
     @FXML
     void onProcessAttack(ActionEvent event) {
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-
         if (originalImage == null) {
             messageHeader.setText("Belum Memilih Citra");
             messageBody.setText("Harap pilih citra yang akan diproses terlebih dahulu.");
@@ -302,27 +307,33 @@ public class RemovalController implements Initializable {
 
     @FXML
     void onSaveModifiedImage(ActionEvent event) {
+        String newFilename = "";
+        
         switch (type) {
             case SHARPENING:
-                this.fileName = "sharpen_" + fileName;
+                newFilename = "sharpen_" + fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\7_sharpening");
                 break;
             case BLURRING:
-                this.fileName = "blur_" + fileName;
+                newFilename = "blur_" + fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\8_blurring");
                 break;
             case MEDIAN_FILTER:
-                this.fileName = "medianfilter_" + fileName;
+                newFilename = "medianfilter_" + fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\9_medianfiltering");
                 break;
             case NOISE_ADDITION:
-                this.fileName = "noise_" + fileName;
+                newFilename = "noise_" + fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\10_noiseadding");
                 break;
         }
-        
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Simpan Citra Baru");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\modified"));
+            fileChooser.setInitialDirectory(savedDir);
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
-            fileChooser.setInitialFileName(fileName);
+            fileChooser.setInitialFileName(newFilename);
 
             File file = fileChooser.showSaveDialog(new Stage());
 
@@ -332,6 +343,21 @@ public class RemovalController implements Initializable {
             }
         } catch (IOException ex) {
             System.out.println("File not an image or not found");
+        }
+    }
+
+    private void decideSaveLocation(String path) {
+        int containerHeight = originalImage.heightProperty().intValue();
+        int containerWidth = originalImage.widthProperty().intValue();
+
+        if ((containerHeight >= 512 && containerHeight < 1024)
+                && (containerWidth >= 512 && containerWidth < 1024)) {
+            savedDir = new File(path + "\\small");
+        } else if ((containerHeight >= 1024 && containerHeight < 2048)
+                && (containerWidth >= 1024 && containerWidth < 2048)) {
+            savedDir = new File(path + "\\medium");
+        } else if (containerHeight >= 2048 && containerWidth >= 2048) {
+            savedDir = new File(path + "\\large");
         }
     }
 

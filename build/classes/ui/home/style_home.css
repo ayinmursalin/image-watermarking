@@ -12,3 +12,10 @@
     -fx-alignment: center;
     -fx-text-alignment: center;
 }
+
+.myGreyButton {
+    -fx-background-color: #494949;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: center;
+    -fx-text-alignment: center;    
+}

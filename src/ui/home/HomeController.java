@@ -16,25 +16,33 @@ public class HomeController implements Initializable {
 
     @FXML
     private JFXButton btnEmbedding;
-
     @FXML
     private JFXButton btnExtracting;
-
     @FXML
     private JFXButton btnGeometryAttacks;
-
     @FXML
     private JFXButton btnRemovalAttacks;
+    @FXML
+    private JFXButton btnGreyscaling;
 
-    Stage embeddingStage, extractingStage, removalAttackStage, geometricAttackStage;
+    Stage greyscaling;
+    Stage embeddingStage, extractingStage;
+    Stage removalAttackStage, geometricAttackStage;
 
     // on initialize
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        greyscaling = new Stage();
         embeddingStage = new Stage();
         extractingStage = new Stage();
         removalAttackStage = new Stage();
         geometricAttackStage = new Stage();
+    }
+
+    @FXML
+    void onGreyscaling(ActionEvent event) throws IOException {
+        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/greyscaling/layout_greyscaling.fxml"));
+        openNewWindow(greyscaling, root, "Embedding Process");
     }
 
     @FXML

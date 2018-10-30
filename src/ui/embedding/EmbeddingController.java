@@ -9,7 +9,6 @@ import core.Watermarker;
 import core.helper.ImageUtil;
 import core.helper.PeakSignalNoiseRation;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,10 +26,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -67,20 +64,19 @@ public class EmbeddingController implements Initializable {
     @FXML
     private JFXProgressBar pbEmbedd;
 
+    Text messageHeader, messageBody;
     private JFXDialogLayout dialogLayout;
     private JFXDialog dialog;
 
     private Watermarker watermarker;
     private Image containerImage, watermarkImage, embeddedImage;
+
     private String fileName = "";
-    private int seed1 = -1, seed2 = -1;
+    private File savedDir;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         watermarker = new Watermarker();
-
-        dialogLayout = new JFXDialogLayout();
-        dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
 
         tfSeed1.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (!newValue.matches("\\d{0,7}")) {
@@ -92,6 +88,18 @@ public class EmbeddingController implements Initializable {
                 tfSeed2.setText(oldValue);
             }
         });
+
+        // dialog
+        messageHeader = new Text();
+        messageBody = new Text();
+
+        dialogLayout = new JFXDialogLayout();
+        dialogLayout.setHeading(messageHeader);
+        dialogLayout.setBody(messageBody);
+        dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+
+        // save dir init
+        savedDir = new File("D:\\_watermarking\\saved\\2_embedding");
     }
 
     @FXML
@@ -101,7 +109,7 @@ public class EmbeddingController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Penampung");
-            fileChooser.setInitialDirectory(new File("D:\\coding\\netbeans\\Watermarking\\src\\images"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved\\1_greyscaling"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -116,16 +124,18 @@ public class EmbeddingController implements Initializable {
 
             if (imageHeight == imageWidth) {
                 if (imageWidth >= 512 || imageHeight >= 512) {
-                    toGreyscaleImage(image);
+                    this.containerImage = image;
+
+                    ivPreviewImageContainer.setImage(containerImage);
                 } else {
-                    dialogLayout.setHeading(new Text("Ukuran Citra Penampung terlalu kecil"));
-                    dialogLayout.setBody(new Text("Ukuran citra penampung minimal 512 x 512"));
+                    messageHeader.setText("Ukuran Citra Penampung terlalu kecil");
+                    messageBody.setText("Ukuran citra penampung minimal 512 x 512");
 
                     dialog.show();
                 }
             } else {
-                dialogLayout.setHeading(new Text("Bukan Citra Persegi"));
-                dialogLayout.setBody(new Text("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama"));
+                messageHeader.setText("Bukan Citra Persegi");
+                messageBody.setText("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama");
 
                 dialog.show();
             }
@@ -139,7 +149,7 @@ public class EmbeddingController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Tanda Air");
-            fileChooser.setInitialDirectory(new File("D:\\coding\\netbeans\\Watermarking\\src\\images"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\source\\watermark"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -153,8 +163,8 @@ public class EmbeddingController implements Initializable {
 
                 ivPreviewWatermark.setImage(watermarkImage);
             } else {
-                dialogLayout.setHeading(new Text("Citra Tanda Air tidak Sesuai"));
-                dialogLayout.setBody(new Text("Ukuran citra tanda air harus 32x32"));
+                messageHeader.setText("Citra Tanda Air tidak Sesuai");
+                messageBody.setText("Ukuran citra tanda air harus berukuran 32x32");
 
                 dialog.show();
             }
@@ -163,118 +173,86 @@ public class EmbeddingController implements Initializable {
         }
     }
 
-    private void toGreyscaleImage(Image image) {
-        int height = image.heightProperty().intValue();
-        int width = image.widthProperty().intValue();
-
-        WritableImage newGreyscaleImage = new WritableImage(width, height);
-
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                Color color = image.getPixelReader().getColor(col, row);
-                Color greyscaleColor = color.grayscale();
-
-                newGreyscaleImage.getPixelWriter()
-                        .setColor(col, row, greyscaleColor);
-            }
-        }
-
-        this.containerImage = newGreyscaleImage;
-
-        ivPreviewImageContainer.setImage(containerImage);
-    }
-
     @FXML
     void onEmbeddWatemark(ActionEvent event) {
         try {
-            seed1 = (int) Integer.parseInt(tfSeed1.getText());
-            seed2 = (int) Integer.parseInt(tfSeed2.getText());
+            int seed1 = (int) Integer.parseInt(tfSeed1.getText());
+            int seed2 = (int) Integer.parseInt(tfSeed2.getText());
+
+            if (containerImage == null) {
+                messageHeader.setText("Citra Penampung Kosong");
+                messageBody.setText("Citra penampung belum dipilih, harap pilih citra penampung terlebih dahulu");
+
+                dialog.show();
+            } else if (watermarkImage == null) {
+                messageHeader.setText("Citra Tanda Air Kosong");
+                messageBody.setText("Citra tanda air belum dipilih, harap pilih citra tanda air terlebih dahulu");
+
+                dialog.show();
+            } else {
+                messageHeader.setText("Informasi Penting");
+                messageBody.setText("Harap diingat seed1 dan seed2 yang anda masukkan, untuk digunakan lagi saat proses ekstraksi tanda air.");
+
+                dialog.show();
+
+                // calculate PSNR
+                Task<Double> calculatePsnrTask = new Task<Double>() {
+                    @Override
+                    protected Double call() throws Exception {
+                        pbEmbedd.setVisible(true);
+
+                        PeakSignalNoiseRation psnr = new PeakSignalNoiseRation(containerImage, embeddedImage);
+
+                        return psnr.getPsnrValue();
+                    }
+                };
+                calculatePsnrTask.setOnSucceeded((WorkerStateEvent event1) -> {
+                    pbEmbedd.setVisible(false);
+                    paneOutput.setVisible(true);
+
+                    double psnr = calculatePsnrTask.getValue();
+
+                    labelPSNR.setText("PSNR : " + psnr);
+                });
+
+                // embeddWatermark
+                Task<Image> embeddTask = new Task<Image>() {
+                    @Override
+                    protected Image call() throws Exception {
+                        pbEmbedd.setVisible(true);
+                        // run in background thread
+                        return watermarker.embeddWatermark(containerImage, watermarkImage, seed1, seed2);
+                    }
+                };
+                embeddTask.setOnSucceeded((WorkerStateEvent event1) -> {
+                    pbEmbedd.setVisible(false);
+                    dialog.close();
+                    this.embeddedImage = embeddTask.getValue();
+
+                    ivPreviewImageContainer.setImage(embeddedImage);
+
+                    // start Calculate PSNR task after finisihing embedd image
+                    new Thread(calculatePsnrTask).start();
+                });
+
+                new Thread(embeddTask).start();
+            }
         } catch (NumberFormatException e) {
-            // error
-        }
-
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-
-        if (containerImage == null) {
-            messageHeader.setText("Citra Penampung Kosong");
-            messageBody.setText("Citra penampung belum dipilih, harap pilih citra penampung terlebih dahulu");
+            messageHeader.setText("Belum memasukkan Key 1 atau Key 2");
+            messageBody.setText("Belum memasukkan key 1 atau 2, harap isi terlebih dahulu key 1 dan key 2");
 
             dialog.show();
-        } else if (watermarkImage == null) {
-            messageHeader.setText("Citra Tanda Air Kosong");
-            messageBody.setText("Citra tanda air belum dipilih, harap pilih citra tanda air terlebih dahulu");
-
-            dialog.show();
-        } else if (seed1 == -1) {
-            messageHeader.setText("Key 1 belum diisi");
-            messageBody.setText("Belum memasukkan seed 1, harap isi terlebih dahulu seed 1");
-
-            dialog.show();
-        } else if (seed2 == -1) {
-            messageHeader.setText("Key 2 belum diisi");
-            messageBody.setText("Belum memasukkan seed 2, harap isi terlebih dahulu seed 2");
-
-            dialog.show();
-        } else {
-            messageHeader.setText("Informasi Penting");
-            messageBody.setText("Harap diingat seed1 dan seed2 yang anda masukkan, untuk digunakan lagi saat proses ekstraksi tanda air.");
-
-            dialog.show();
-
-            // calculate PSNR
-            Task<Double> calculatePsnrTask = new Task<Double>() {
-                @Override
-                protected Double call() throws Exception {
-                    pbEmbedd.setVisible(true);
-
-                    PeakSignalNoiseRation psnr = new PeakSignalNoiseRation(containerImage, embeddedImage);
-
-                    return psnr.getPsnrValue();
-                }
-            };
-            calculatePsnrTask.setOnSucceeded((WorkerStateEvent event1) -> {
-                pbEmbedd.setVisible(false);
-                paneOutput.setVisible(true);
-
-                double psnr = calculatePsnrTask.getValue();
-
-                labelPSNR.setText("PSNR : " + psnr);
-            });
-
-            // embeddWatermark
-            Task<Image> embeddTask = new Task<Image>() {
-                @Override
-                protected Image call() throws Exception {
-                    pbEmbedd.setVisible(true);
-                    // run in background thread
-                    return watermarker.embeddWatermark(containerImage, watermarkImage, seed1, seed2);
-                }
-            };
-            embeddTask.setOnSucceeded((WorkerStateEvent event1) -> {
-                pbEmbedd.setVisible(false);
-                dialog.close();
-                this.embeddedImage = embeddTask.getValue();
-
-                ivPreviewImageContainer.setImage(embeddedImage);
-
-                // start Calculate PSNR task after finisihing embedd image
-                new Thread(calculatePsnrTask).start();
-            });
-
-            new Thread(embeddTask).start();
         }
     }
 
     @FXML
     void onSaveEmebeddedImage(ActionEvent event) {
+        decideSaveLocation();
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Simpan Citra Baru");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\embedded"));
+            fileChooser.setInitialDirectory(savedDir);
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
             fileChooser.setInitialFileName(fileName);
 
@@ -289,17 +267,19 @@ public class EmbeddingController implements Initializable {
         }
     }
 
-    private IndexColorModel getDefaultColorModel() {
-        byte[] r = new byte[256];
-        byte[] g = new byte[256];
-        byte[] b = new byte[256];
-        for (int i = 0; i < 256; i++) {
-            r[i] = (byte) i;
-            g[i] = (byte) i;
-            b[i] = (byte) i;
+    private void decideSaveLocation() {
+        int containerHeight = containerImage.heightProperty().intValue();
+        int containerWidth = containerImage.widthProperty().intValue();
+
+        if ((containerHeight >= 512 && containerHeight < 1024)
+                && (containerWidth >= 512 && containerWidth < 1024)) {
+            savedDir = new File("D:\\_watermarking\\saved\\2_embedding\\small");
+        } else if ((containerHeight >= 1024 && containerHeight < 2048)
+                && (containerWidth >= 1024 && containerWidth < 2048)) {
+            savedDir = new File("D:\\_watermarking\\saved\\2_embedding\\medium");
+        } else if (containerHeight >= 2048 && containerWidth >= 2048) {
+            savedDir = new File("D:\\_watermarking\\saved\\2_embedding\\large");
         }
-        IndexColorModel defaultColorModel = new IndexColorModel(8, 256, r, g, b);
-        return defaultColorModel;
     }
 
 }

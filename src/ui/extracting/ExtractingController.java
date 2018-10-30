@@ -70,22 +70,21 @@ public class ExtractingController implements Initializable {
     @FXML
     private JFXProgressBar pbExtract;
 
+    private Text messageHeader, messageBody;
     private JFXDialogLayout dialogLayout;
     private JFXDialog dialog;
 
     private Watermarker watermarker;
     private SimilarityPercentage similarityPercentage;
     private Image embeddedImage, extractedWatermarkImage, originalWatermarkImage;
+
     private String fileName = "";
-    private int seed1 = -1, seed2 = -1;
+    private File savedDir;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         watermarker = new Watermarker();
         similarityPercentage = new SimilarityPercentage();
-
-        dialogLayout = new JFXDialogLayout();
-        dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
 
         tfSeed1.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (!newValue.matches("\\d{0,7}")) {
@@ -97,6 +96,18 @@ public class ExtractingController implements Initializable {
                 tfSeed2.setText(oldValue);
             }
         });
+
+        // dialog
+        messageHeader = new Text("");
+        messageBody = new Text("");
+
+        dialogLayout = new JFXDialogLayout();
+        dialogLayout.setHeading(messageHeader);
+        dialogLayout.setBody(messageBody);
+        dialog = new JFXDialog(stackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+
+        // save dir init
+        savedDir = new File("D:\\_watermarking\\saved\\3_extracting");
     }
 
     @FXML
@@ -106,7 +117,7 @@ public class ExtractingController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Penampung");
-            fileChooser.setInitialDirectory(new File("D:\\saved"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved\\2_embedding"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -125,14 +136,14 @@ public class ExtractingController implements Initializable {
 
                     ivPreviewImageContainer.setImage(embeddedImage);
                 } else {
-                    dialogLayout.setHeading(new Text("Ukuran Citra Penampung terlalu kecil"));
-                    dialogLayout.setBody(new Text("Ukuran citra penampung minimal 512 x 512"));
+                    messageHeader.setText("Ukuran Citra Penampung terlalu kecil");
+                    messageBody.setText("Ukuran citra penampung minimal 512 x 512");
 
                     dialog.show();
                 }
             } else {
-                dialogLayout.setHeading(new Text("Bukan Citra Persegi"));
-                dialogLayout.setBody(new Text("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama"));
+                messageHeader.setText("Bukan Citra Persegi");
+                messageBody.setText("Harap masukkan citra yang mempunyai ukuran panjang dan lebar yang sama");
 
                 dialog.show();
             }
@@ -144,61 +155,50 @@ public class ExtractingController implements Initializable {
     @FXML
     void onExtractWatermark(ActionEvent event) {
         try {
-            seed1 = (int) Integer.parseInt(tfSeed1.getText());
-            seed2 = (int) Integer.parseInt(tfSeed2.getText());
+            int seed1 = (int) Integer.parseInt(tfSeed1.getText());
+            int seed2 = (int) Integer.parseInt(tfSeed2.getText());
+
+            if (embeddedImage == null) {
+                messageHeader.setText("Citra Penampung Kosong");
+                messageBody.setText("Citra penampung belum dipilih, harap pilih citra penampung yang sudah dilakukan proses embedding watermark terlebih dahulu");
+
+                dialog.show();
+            } else {
+                Task<Image> extractTask = new Task<Image>() {
+                    @Override
+                    protected Image call() throws Exception {
+                        pbExtract.setVisible(true);
+                        // run in background
+                        return watermarker.extractWatermark(embeddedImage, seed1, seed2);
+                    }
+                };
+                extractTask.setOnSucceeded((WorkerStateEvent event1) -> {
+                    pbExtract.setVisible(false);
+                    paneOutput.setVisible(true);
+
+                    this.extractedWatermarkImage = extractTask.getValue();
+
+                    ivPreviewExtractedWatermark.setImage(extractedWatermarkImage);
+                });
+
+                new Thread(extractTask).start();
+            }
         } catch (NumberFormatException e) {
-            // error
-        }
-
-        Text messageHeader = new Text();
-        Text messageBody = new Text();
-
-        dialogLayout.setHeading(messageHeader);
-        dialogLayout.setBody(messageBody);
-        
-        if (embeddedImage == null) {
-            messageHeader.setText("Citra Penampung Kosong");
-            messageBody.setText("Citra penampung belum dipilih, harap pilih citra penampung yang sudah dilakukan proses embedding watermark terlebih dahulu");
+            messageHeader.setText("Belum memasukkan Key 1 atau Key 2");
+            messageBody.setText("Belum memasukkan key 1 atau 2, harap isi terlebih dahulu key 1 dan key 2");
 
             dialog.show();
-        } else if (seed1 == -1) {
-            messageHeader.setText("Key 1 belum diisi");
-            messageBody.setText("Belum memasukkan seed 1, harap isi terlebih dahulu seed 1");
-
-            dialog.show();
-        } else if (seed2 == -1) {
-            messageHeader.setText("Key 2 belum diisi");
-            messageBody.setText("Belum memasukkan seed 2, harap isi terlebih dahulu seed 2");
-
-            dialog.show();
-        } else {
-            Task<Image> extractTask = new Task<Image>() {
-                @Override
-                protected Image call() throws Exception {
-                    pbExtract.setVisible(true);
-                    // run in background
-                    return watermarker.extractWatermark(embeddedImage, seed1, seed2);
-                }
-            };
-            extractTask.setOnSucceeded((WorkerStateEvent event1) -> {
-                pbExtract.setVisible(false);
-                paneOutput.setVisible(true);
-
-                this.extractedWatermarkImage = extractTask.getValue();
-
-                ivPreviewExtractedWatermark.setImage(extractedWatermarkImage);
-            });
-
-            new Thread(extractTask).start();
         }
     }
 
     @FXML
     void onSaveExtractedWatermark(ActionEvent event) {
+        decideSaveLocation();
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Simpan Citra Tanda Air Hasil Ekstraksi");
-            fileChooser.setInitialDirectory(new File("D:\\saved\\extracted_watermark"));
+            fileChooser.setInitialDirectory(savedDir);
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
             fileChooser.setInitialFileName(fileName);
 
@@ -218,7 +218,7 @@ public class ExtractingController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Tanda Air");
-            fileChooser.setInitialDirectory(new File("D:\\coding\\netbeans\\Watermarking\\src\\images"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\source\\watermark"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());
@@ -252,9 +252,24 @@ public class ExtractingController implements Initializable {
         } else {
             double percentage = similarityPercentage
                     .getSimilarityPercentage(extractedWatermarkImage, originalWatermarkImage);
-            
+
             String percentageStr = String.format("%.0f", percentage);
             labelSimilarityPercentage.setText("Persentase Kesamaan : " + percentageStr + "%");
+        }
+    }
+
+    private void decideSaveLocation() {
+        int containerHeight = embeddedImage.heightProperty().intValue();
+        int containerWidth = embeddedImage.widthProperty().intValue();
+
+        if ((containerHeight >= 512 && containerHeight < 1024)
+                && (containerWidth >= 512 && containerWidth < 1024)) {
+            savedDir = new File("D:\\_watermarking\\saved\\3_extracting\\small");
+        } else if ((containerHeight >= 1024 && containerHeight < 2048)
+                && (containerWidth >= 1024 && containerWidth < 2048)) {
+            savedDir = new File("D:\\_watermarking\\saved\\3_extracting\\medium");
+        } else if (containerHeight >= 2048 && containerWidth >= 2048) {
+            savedDir = new File("D:\\_watermarking\\saved\\3_extracting\\large");
         }
     }
 
