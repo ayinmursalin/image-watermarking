@@ -1,7 +1,7 @@
 package ui.removalattacks;
 
-import core.attacks.RemovalAttacker;
-import core.attacks.RemovalType;
+import core.attacks.removal.RemovalAttacker;
+import core.attacks.removal.RemovalType;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -241,9 +241,6 @@ public class RemovalController implements Initializable {
                 return attacker.medianFilterImage(imageToProcess);
             }
         };
-        medianFilterTask.setOnFailed((event) -> {
-            System.out.println("FAILED");
-        });
         medianFilterTask.setOnSucceeded((WorkerStateEvent event) -> {
             pbRemoval.setVisible(false);
             paneOutput.setVisible(true);
@@ -268,9 +265,6 @@ public class RemovalController implements Initializable {
                 return attacker.noiseAdditionImage(imageToProcess);
             }
         };
-        noiseAdditionTask.setOnFailed((event) -> {
-            System.out.println("FAILED");
-        });
         noiseAdditionTask.setOnSucceeded((WorkerStateEvent event) -> {
             pbRemoval.setVisible(false);
             paneOutput.setVisible(true);

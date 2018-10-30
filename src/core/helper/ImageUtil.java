@@ -65,7 +65,7 @@ public class ImageUtil {
                 Color color = image.getPixelReader().getColor(col, row);
                 // color.getRed() return pixel value with range 0~1
                 int red = (int) color.getRed();
-                
+
                 binaryPixels.add(red);
             }
         }
@@ -91,6 +91,22 @@ public class ImageUtil {
         }
 
         return image;
+    }
+
+    public static Image copyImage(Image sourceImage) {
+        int height = sourceImage.heightProperty().intValue();
+        int width = sourceImage.widthProperty().intValue();
+
+        WritableImage copyImage = new WritableImage(width, height);
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                copyImage.getPixelWriter().setArgb(col, row, 
+                        sourceImage.getPixelReader().getArgb(col, row));
+            }
+        }
+
+        return copyImage;
     }
 
 }

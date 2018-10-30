@@ -1,4 +1,4 @@
-package core.attacks;
+package core.attacks.removal;
 
 public class KernelConstant {
 

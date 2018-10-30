@@ -1,4 +1,4 @@
-package core.attacks;
+package core.attacks.removal;
 
 import core.helper.ImageUtil;
 import java.util.ArrayList;

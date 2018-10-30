@@ -26,7 +26,7 @@ public class HomeController implements Initializable {
     @FXML
     private JFXButton btnRemovalAttacks;
 
-    Stage embeddingStage, extractingStage, removalAttackStage;
+    Stage embeddingStage, extractingStage, removalAttackStage, geometricAttackStage;
 
     // on initialize
     @Override
@@ -34,6 +34,7 @@ public class HomeController implements Initializable {
         embeddingStage = new Stage();
         extractingStage = new Stage();
         removalAttackStage = new Stage();
+        geometricAttackStage = new Stage();
     }
 
     @FXML
@@ -50,8 +51,8 @@ public class HomeController implements Initializable {
 
     @FXML
     void onGeometryAttacks(ActionEvent event) throws IOException {
-//        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/embedding/layout_embedding.fxml"));
-
+        Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/geometricattacks/layout_geometric.fxml"));
+        openNewWindow(geometricAttackStage, root, "Geometric Attacks");
     }
 
     @FXML

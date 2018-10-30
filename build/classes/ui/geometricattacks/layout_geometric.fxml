@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1360.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.geometricattacks.GeometricController">
+    <children>
+        <AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1360.0" styleClass="mainFxmlClass">
+            <stylesheets>
+                <URL value="@style_geometric.css" />
+            </stylesheets>
+            <children>
+                <Pane fx:id="paneBackgroundLeft" prefHeight="768.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
+                    <children>
+                        <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra Penampung" />
+                        <JFXButton fx:id="btnChooseImage" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
+                        <Pane layoutX="200.0" layoutY="60.0" prefHeight="552.0" prefWidth="552.0" styleClass="myPaneOfImage">
+                            <children>
+                                <ImageView fx:id="ivPreviewImage" fitHeight="512.0" fitWidth="512.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+                            </children>
+                        </Pane>
+                    </children>
+                </Pane>
+                <Pane fx:id="paneBackgroundRight" layoutX="900.0" prefHeight="768.0" prefWidth="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+                    <children>
+                        <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Jenis Serangan (Geometric Attacks)" />
+                        <JFXButton fx:id="btnProcessAttack" buttonType="RAISED" layoutX="156.0" layoutY="280.0" onAction="#onProcessAttack" prefHeight="130.0" prefWidth="290.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Proses" visible="false">
+                            <font>
+                                <Font size="32.0" />
+                            </font>
+                        </JFXButton>
+                        <Pane fx:id="paneOutput" layoutX="119.0" layoutY="531.0" prefHeight="118.0" prefWidth="332.0" style="-fx-background-color: #ffffff;" visible="false">
+                            <children>
+                                <Label fx:id="labelPSNR" contentDisplay="CENTER" layoutX="16.0" layoutY="21.0" prefHeight="25.0" prefWidth="300.0" styleClass="myLabel" text="PSNR :   " textAlignment="CENTER" />
+                                <JFXButton fx:id="btnSaveModifiedImage" buttonType="RAISED" layoutX="106.0" layoutY="69.0" onAction="#onSaveModifiedImage" prefHeight="35.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Simpan Citra" />
+                            </children>
+                        </Pane>
+                        <JFXRadioButton fx:id="rbRotation" layoutX="68.0" layoutY="76.0" onAction="#onChooseGeometricAttack" prefHeight="25.0" prefWidth="120.0" text="Rotation">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="geometricattack" />
+                     </toggleGroup>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="rbScalling" layoutX="420.0" layoutY="76.0" onAction="#onChooseGeometricAttack" prefHeight="25.0" prefWidth="120.0" text="Scalling" toggleGroup="$geometricattack" />
+                        <JFXRadioButton fx:id="rbTranslation" layoutX="241.0" layoutY="76.0" onAction="#onChooseGeometricAttack" prefHeight="25.0" prefWidth="120.0" text="Translation" toggleGroup="$geometricattack" />
+                  <GridPane fx:id="layoutRotation" layoutX="178.0" layoutY="305.0" prefHeight="80.0" prefWidth="247.0" visible="false">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <JFXButton fx:id="btnRotateLeft" buttonType="RAISED" contentDisplay="TOP" onAction="#onRotateLeft" prefHeight="103.0" prefWidth="98.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Kiri">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/app_icon/rotate_left.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton fx:id="btnRotateRight" buttonType="RAISED" contentDisplay="TOP" onAction="#onRotateRight" prefHeight="117.0" prefWidth="113.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Kanan" GridPane.columnIndex="2">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/app_icon/rotate_right.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                     </children>
+                  </GridPane>
+                  <Pane fx:id="layoutTranslation" layoutX="95.0" layoutY="135.0" prefHeight="118.0" prefWidth="383.0" visible="false">
+                     <children>
+                        <JFXTextField fx:id="tfTranslationX" labelFloat="true" layoutX="62.0" layoutY="74.0" prefHeight="25.0" prefWidth="82.0" promptText="x" />
+                        <JFXTextField fx:id="tfTranslationY" labelFloat="true" layoutX="272.0" layoutY="74.0" prefHeight="25.0" prefWidth="82.0" promptText="y" />
+                        <ImageView fitHeight="36.0" fitWidth="36.0" layoutX="14.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/app_icon/translation_horizontal.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="36.0" fitWidth="36.0" layoutX="221.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/app_icon/translation_vertical.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="27.0" layoutY="17.0" text="Translasi Horizontal" />
+                        <Label layoutX="247.0" layoutY="17.0" text="Translasi Vertical" />
+                     </children>
+                  </Pane>
+                  <Pane fx:id="layoutScalling" layoutX="95.0" layoutY="135.0" prefHeight="118.0" prefWidth="383.0" visible="false">
+                     <children>
+                        <JFXTextField fx:id="tfScalling" layoutX="167.0" layoutY="76.0" prefHeight="25.0" prefWidth="89.0" />
+                        <ImageView fitHeight="36.0" fitWidth="36.0" layoutX="115.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/app_icon/scalling.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="142.0" layoutY="23.0" text="Scalling (x times)" />
+                     </children>
+                  </Pane>
+                    </children>
+                </Pane>
+                <MenuBar prefHeight="25.0" prefWidth="305.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Close" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Edit">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Delete" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <JFXProgressBar fx:id="pbRemoval" layoutY="25.0" prefHeight="8.0" prefWidth="1360.0" visible="false" />
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>
