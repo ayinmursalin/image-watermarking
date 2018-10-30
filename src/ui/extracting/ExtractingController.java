@@ -117,7 +117,7 @@ public class ExtractingController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Pilih Citra Penampung");
-            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved\\2_embedding"));
+            fileChooser.setInitialDirectory(new File("D:\\_watermarking\\saved"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
 
             File imageFile = fileChooser.showOpenDialog(new Stage());

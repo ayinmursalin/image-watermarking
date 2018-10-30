@@ -3,6 +3,7 @@ package core.attacks.removal;
 import core.helper.ImageUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import javafx.scene.image.Image;
 
 public class RemovalAttacker {
@@ -93,7 +94,7 @@ public class RemovalAttacker {
 
         return ImageUtil.pixelValuesToImage(modifiedPixels);
     }
-
+    
     /**
      * Adding random Gaussian noise to image
      *
@@ -114,15 +115,15 @@ public class RemovalAttacker {
         double standarDeviation = calculateStandarDeviation(sourcePixels, mean);
         double variance = standarDeviation * standarDeviation;
 
-        for (int row = 0; row < height; row += BLOCK_SIZE) {
-            for (int col = 0; col < width; col += BLOCK_SIZE) {
-                a = Math.random();
-                b = Math.random();
-
+        for (int row = 0; row < height; row ++) {
+            for (int col = 0; col < width; col ++) {
+                a = Math.min(1, Math.random() + 0.15);
+                b = Math.min(1, Math.random() + 0.15);
+                
                 double x = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
-                double noise = mean + Math.sqrt(variance) * x;
+                double noise = Math.sqrt(variance) * x;
 
-                modifiedPixels[row][col] = sourcePixels[row][col] + noise;
+                modifiedPixels[row][col] = Math.min(sourcePixels[row][col] + noise, 255);
             }
         }
 
