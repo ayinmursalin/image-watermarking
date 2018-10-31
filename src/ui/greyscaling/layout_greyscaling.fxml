@@ -57,7 +57,7 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <JFXProgressBar fx:id="pbRemoval" layoutY="25.0" prefHeight="8.0" prefWidth="1360.0" visible="false" />
+                <JFXProgressBar fx:id="pbGreyscale" layoutY="25.0" prefHeight="8.0" prefWidth="1360.0" visible="false" />
             </children>
         </AnchorPane>
     </children>

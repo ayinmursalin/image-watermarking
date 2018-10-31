@@ -11,8 +11,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
@@ -43,7 +46,7 @@ public class GreyscalingController implements Initializable {
     @FXML
     private JFXButton btnSaveImage;
     @FXML
-    private JFXProgressBar pbRemoval;
+    private JFXProgressBar pbGreyscale;
 
     private Text messageHeader, messageBody;
     private JFXDialogLayout dialogLayout;
@@ -106,22 +109,36 @@ public class GreyscalingController implements Initializable {
     void onGreyscaleImage(ActionEvent event) {
         int height = originalImage.heightProperty().intValue();
         int width = originalImage.widthProperty().intValue();
+        
+        Task<Image> greyscaleTask = new Task<Image>() {
+            @Override
+            protected Image call() throws Exception {
+                pbGreyscale.setVisible(true);
+                
+                WritableImage newGreyscaleImage = new WritableImage(width, height);
 
-        WritableImage newGreyscaleImage = new WritableImage(width, height);
+                for (int row = 0; row < height; row++) {
+                    for (int col = 0; col < width; col++) {
+                        Color color = originalImage.getPixelReader().getColor(col, row);
+                        Color greyscaleColor = color.grayscale();
 
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                Color color = originalImage.getPixelReader().getColor(col, row);
-                Color greyscaleColor = color.grayscale();
-
-                newGreyscaleImage.getPixelWriter()
-                        .setColor(col, row, greyscaleColor);
+                        newGreyscaleImage.getPixelWriter()
+                                .setColor(col, row, greyscaleColor);
+                    }
+                }
+                
+                return newGreyscaleImage;
             }
-        }
+        };
+        greyscaleTask.setOnSucceeded((WorkerStateEvent event1) -> {
+            pbGreyscale.setVisible(false);
+            
+            this.greyscaleImage = greyscaleTask.getValue();
 
-        this.greyscaleImage = newGreyscaleImage;
-
-        ivPreviewGreyscaleImage.setImage(greyscaleImage);
+            ivPreviewGreyscaleImage.setImage(greyscaleImage);
+        });
+        
+        new Thread(greyscaleTask).start();
     }
     
     @FXML
