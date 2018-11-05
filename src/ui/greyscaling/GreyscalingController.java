@@ -15,7 +15,6 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;

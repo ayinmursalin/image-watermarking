@@ -1,6 +1,5 @@
-package ui.extracting;
+package core.helper;
 
-import core.helper.ImageUtil;
 import javafx.scene.image.Image;
 
 public class SimilarityPercentage {

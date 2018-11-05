@@ -42,7 +42,7 @@ public class HomeController implements Initializable {
     @FXML
     void onGreyscaling(ActionEvent event) throws IOException {
         Parent root = (Parent) FXMLLoader.load(getClass().getResource("/ui/greyscaling/layout_greyscaling.fxml"));
-        openNewWindow(greyscaling, root, "Embedding Process");
+        openNewWindow(greyscaling, root, "Greyscaling Process");
     }
 
     @FXML

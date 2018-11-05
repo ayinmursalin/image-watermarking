@@ -3,7 +3,6 @@ package core.attacks.removal;
 import core.helper.ImageUtil;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import javafx.scene.image.Image;
 
 public class RemovalAttacker {
@@ -175,10 +174,6 @@ public class RemovalAttacker {
         var = var / (n - 1);
 
         return Math.sqrt(var);
-    }
-
-    private double boxMuller(double u1, double u2, double mean, double st_dev) {
-        return ((Math.sqrt(-2 * Math.log(u2)) * Math.cos(2 * Math.PI * u1) * st_dev) + mean);
     }
 
 }
