@@ -3,7 +3,7 @@
  */
 
 .mainFxmlClass {
-    
+    -fx-background-color: #f2f4fb;
 }
 
 .myButton {
@@ -18,4 +18,8 @@
     -fx-text-fill: #ffffff;
     -fx-alignment: center;
     -fx-text-alignment: center;    
+}
+
+.myPain {
+    -fx-background-color: #ffffff;
 }

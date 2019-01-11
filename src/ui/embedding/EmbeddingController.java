@@ -21,6 +21,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -194,7 +195,6 @@ public class EmbeddingController implements Initializable {
                 messageBody.setText("Harap diingat seed1 dan seed2 yang anda masukkan, untuk digunakan lagi saat proses ekstraksi tanda air.");
 
                 dialog.show();
-
                 // calculate PSNR
                 Task<Double> calculatePsnrTask = new Task<Double>() {
                     @Override

@@ -60,7 +60,7 @@ public class Watermarker {
         // clear before use
         dwt.clear();
         dct.clear();
-
+        
         List<Double> pn0 = pseudorandomGenerator.getRandomNumbers(seed1, MID_BAND_DCT_SIZE);
         List<Double> pn1 = pseudorandomGenerator.getRandomNumbers(seed2, MID_BAND_DCT_SIZE);
 
@@ -93,6 +93,7 @@ public class Watermarker {
 
             ArrayList<Double> newMidBand = new ArrayList();
             if (watermark.get(watermarkIndex) == 0) {
+                // black
                 for (int midBandIndex = 0; midBandIndex < MID_BAND_DCT_SIZE; midBandIndex++) {
                     double fPn0 = pn0.get(midBandIndex) * GAIN_FACTOR;
                     double newValue = midBand.get(midBandIndex) + fPn0;
@@ -100,6 +101,7 @@ public class Watermarker {
                     newMidBand.add(newValue);
                 }
             } else if (watermark.get(watermarkIndex) == 1) {
+                // white
                 for (int midBandIndex = 0; midBandIndex < MID_BAND_DCT_SIZE; midBandIndex++) {
                     double fPn1 = pn1.get(midBandIndex) * GAIN_FACTOR;
                     double newValue = midBand.get(midBandIndex) + fPn1;
@@ -110,7 +112,6 @@ public class Watermarker {
 
             // now mid band coefficient in blockedPixels already replaced with newMidBand
             dct.setMidbandCoefficient(blockedPixels, newMidBand);
-
         }
 
         // new replace list of blocked pixes with embedded pixels

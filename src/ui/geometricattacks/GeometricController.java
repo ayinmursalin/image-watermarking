@@ -136,7 +136,6 @@ public class GeometricController implements Initializable {
 
     @FXML
     void onChooseImage(ActionEvent event) {
-        hideLayout();
         paneOutput.setVisible(false);
 
         try {
@@ -183,7 +182,7 @@ public class GeometricController implements Initializable {
             layoutTranslation.setVisible(true);
             btnProcessAttack.setVisible(true);
         } else if (selectedRadioButton == rbScalling) {
-            type = GeometricType.SCALLING;
+            type = GeometricType.SCALING;
             layoutScalling.setVisible(true);
             btnProcessAttack.setVisible(true);
         } else {
@@ -254,7 +253,7 @@ public class GeometricController implements Initializable {
                 case TRANSLATION:
                     translateImage(imageToProcess);
                     break;
-                case SCALLING:
+                case SCALING:
                     scaleImage(imageToProcess);
                     break;
             }
@@ -345,8 +344,8 @@ public class GeometricController implements Initializable {
 
             new Thread(scaleTask).start();
         } catch (NumberFormatException e) {
-            messageHeader.setText("Belum Menentukan besaran scalling");
-            messageBody.setText("Harap masukkan besaran scaling terhadap ukuran asli terlebih dahulu.");
+            messageHeader.setText("Belum Menentukan besaran skala perubahan");
+            messageBody.setText("Harap masukkan besaran skala perubahan terhadap ukuran citra asal terlebih dahulu.");
 
             dialog.show();
         }
@@ -389,9 +388,9 @@ public class GeometricController implements Initializable {
                 newFilename = "translation_" + this.fileName;
                 decideSaveLocation("D:\\_watermarking\\saved\\5_translating");
                 break;
-            case SCALLING:
-                newFilename = "scalling_" + this.fileName;
-                decideSaveLocation("D:\\_watermarking\\saved\\6_scalling");
+            case SCALING:
+                newFilename = "scaling_" + this.fileName;
+                decideSaveLocation("D:\\_watermarking\\saved\\6_scaling");
                 break;
         }
 

@@ -19,7 +19,7 @@
                 <URL value="@style_greyscaling.css" />
             </stylesheets>
             <children>
-                <Pane fx:id="paneBackgroundLeft" prefHeight="743.0" prefWidth="1360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
+                <Pane fx:id="paneBackgroundLeft" prefHeight="768.0" prefWidth="1360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
                         <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra asal" />
                         <JFXButton fx:id="btnChooseImage" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
@@ -38,7 +38,7 @@
                   <Label layoutX="1225.0" layoutY="622.0" styleClass="myLabel" text="Citra Greyscale" />
                     </children>
                 </Pane>
-                <MenuBar prefHeight="25.0" prefWidth="305.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <MenuBar prefHeight="25.0" prefWidth="305.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
                         <Menu mnemonicParsing="false" text="File">
                             <items>

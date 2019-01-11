@@ -45,7 +45,6 @@ public class ImageUtil {
                 int red = (argb >> 16) & 0xff;
                 pixels[row][col] = red;
             }
-            System.out.println();
         }
 
         return pixels;
@@ -87,7 +86,6 @@ public class ImageUtil {
                 image.getPixelWriter()
                         .setColor(col, row, Color.rgb(roundedColor, roundedColor, roundedColor));
             }
-            System.out.println();
         }
 
         return image;

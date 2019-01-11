@@ -21,7 +21,7 @@
             <URL value="@style_embedding.css" />
          </stylesheets>
          <children>
-            <Pane fx:id="paneBackgroundLeft" prefHeight="768.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
+            <Pane fx:id="paneBackgroundLeft" layoutY="-2.0" prefHeight="770.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="-2.0">
                <children>
                   <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra Penampung" />
                   <JFXButton fx:id="btnChooseImageContainer" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseContainerImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
@@ -32,7 +32,7 @@
                   </Pane>
                </children>
             </Pane>
-            <Pane fx:id="paneBackgroundRight" layoutX="900.0" prefHeight="768.0" prefWidth="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+            <Pane fx:id="paneBackgroundRight" layoutX="900.0" layoutY="-4.0" prefHeight="772.0" prefWidth="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0">
                <children>
                   <Label layoutX="30.0" layoutY="30.0" styleClass="myLabel" text="Citra Tanda Air" />
                   <JFXButton fx:id="btnChooseWatermark" buttonType="RAISED" layoutX="30.0" layoutY="60.0" onAction="#onChooseWatermarkImage" prefHeight="50.0" prefWidth="120.0" ripplerFill="BLACK" styleClass="myProcessButton" text="Pilih Citra" />
@@ -56,7 +56,7 @@
                   </Pane>
                </children>
             </Pane>
-            <MenuBar prefHeight="25.0" prefWidth="305.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <MenuBar prefHeight="25.0" prefWidth="305.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <menus>
                   <Menu mnemonicParsing="false" text="File">
                      <items>

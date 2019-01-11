@@ -1,5 +1,5 @@
 package core.attacks.geometric;
 
 public enum GeometricType {
-    ROTATION, TRANSLATION, SCALLING    
+    ROTATION, TRANSLATION, SCALING    
 }
